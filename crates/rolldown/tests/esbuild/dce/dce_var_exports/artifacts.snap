@@ -1,0 +1,52 @@
+---
+source: crates/rolldown/tests/common/case.rs
+expression: content
+input_file: crates/rolldown/tests/esbuild/dce/dce_var_exports
+---
+# Assets
+
+## a_js.mjs
+
+```js
+import { __commonJSMin } from "./$runtime$.mjs";
+
+// a.js
+var require_a = __commonJSMin((exports, module) => {
+	var foo = {
+		bar:123
+	};
+	module.exports = foo;
+});
+
+export default require_a();
+```
+## b_js.mjs
+
+```js
+import { __commonJSMin } from "./$runtime$.mjs";
+
+// b.js
+var require_b = __commonJSMin((exports, module) => {
+	var exports = {
+		bar:123
+	};
+	module.exports = exports;
+});
+
+export default require_b();
+```
+## c_js.mjs
+
+```js
+import { __commonJSMin } from "./$runtime$.mjs";
+
+// c.js
+var require_c = __commonJSMin((exports, module) => {
+	var module = {
+		bar:123
+	};
+	exports.foo = module;
+});
+
+export default require_c();
+```

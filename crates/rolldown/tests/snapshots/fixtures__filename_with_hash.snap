@@ -144,6 +144,10 @@ expression: "snapshot_outputs.join(\"\\n\")"
 
 - src_entry_js-!~{000}~.mjs => src_entry_js-Rn8q0JMh.mjs
 
+# tests/esbuild/dce/pure_calls_with_spread
+
+- entry_js-!~{000}~.mjs => entry_js-nbd_H8H4.mjs
+
 # tests/esbuild/dce/remove_code_after_label_with_return
 
 - entry_js-!~{000}~.mjs => entry_js-768RV9YH.mjs
@@ -182,6 +186,10 @@ expression: "snapshot_outputs.join(\"\\n\")"
 # tests/esbuild/dce/tree_shaking_no_bundle_esm
 
 - entry_js-!~{000}~.mjs => entry_js-MYuHUe1l.mjs
+
+# tests/esbuild/dce/tree_shaking_object_property
+
+- entry_js-!~{000}~.mjs => entry_js-LNHPnm9j.mjs
 
 # tests/esbuild/dce/tree_shaking_unary_operators
 

@@ -1,0 +1,14 @@
+---
+source: crates/rolldown/tests/common/case.rs
+expression: content
+input_file: crates/rolldown/tests/esbuild/dce/pure_calls_with_spread
+---
+# Assets
+
+## entry_js.mjs
+
+```js
+// entry.js
+foo(...args);
+new foo(...args);
+```
