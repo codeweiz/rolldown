@@ -5,6 +5,7 @@ import type { NormalizedInputOptions } from '../options/normalized-input-options
 import type { Plugin } from './index'
 import { LOG_LEVEL_DEBUG, LOG_LEVEL_INFO, LOG_LEVEL_WARN } from '../log/logging'
 import { error, logPluginError } from '../log/logs'
+import { unsupported } from '../utils'
 
 export class PluginContext {
   debug: LoggingFunction
@@ -12,6 +13,7 @@ export class PluginContext {
   warn: LoggingFunction
   error: (error: RollupError | string) => never
   resolve: BindingPluginContext['resolve']
+  parse: (input: string, options?: any) => any
 
   constructor(
     options: NormalizedInputOptions,
@@ -46,5 +48,8 @@ export class PluginContext {
       return error(logPluginError(normalizeLog(e), pluginName))
     }
     this.resolve = context.resolve.bind(context)
+    this.parse = unsupported(
+      'PluginContext.parse. You could directly using `acorn` as a workaround.',
+    )
   }
 }

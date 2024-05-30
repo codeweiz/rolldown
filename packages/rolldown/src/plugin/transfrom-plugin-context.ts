@@ -19,6 +19,7 @@ export class TransformPluginContext {
   error: (error: RollupError | string) => never
   resolve: BindingPluginContext['resolve']
   getCombinedSourcemap: () => SourceMap
+  parse: (input: string, options?: any) => any
 
   constructor(
     inner: BindingTransformPluginContext,
@@ -50,6 +51,7 @@ export class TransformPluginContext {
       return context.error(error)
     }
     this.resolve = context.resolve
+    this.parse = context.parse
     this.getCombinedSourcemap = () => JSON.parse(inner.getCombinedSourcemap())
   }
 }
