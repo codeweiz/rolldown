@@ -48,8 +48,10 @@ export class PluginContext {
       return error(logPluginError(normalizeLog(e), pluginName))
     }
     this.resolve = context.resolve.bind(context)
-    this.parse = unsupported(
-      'PluginContext.parse. You could directly using `acorn` as a workaround.',
-    )
+    this.parse = () => {
+      unsupported(
+        'PluginContext.parse. You could directly using `acorn` as a workaround.',
+      )
+    }
   }
 }
