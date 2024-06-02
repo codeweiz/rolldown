@@ -58,12 +58,16 @@ impl Symbols {
     &self.get(refer).name
   }
 
+  #[track_caller]
   pub fn canonical_name_for<'name>(
     &self,
     refer: SymbolRef,
     canonical_names: &'name FxHashMap<SymbolRef, Rstr>,
   ) -> &'name Rstr {
+    // dbg!(&self.get(refer));
     let canonical_ref = self.par_canonical_ref_for(refer);
+
+    // dbg!(&self.get(canonical_ref), &canonical_names);
     &canonical_names[&canonical_ref]
   }
 

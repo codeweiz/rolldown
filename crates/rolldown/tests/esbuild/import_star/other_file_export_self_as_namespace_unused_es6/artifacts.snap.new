@@ -1,0 +1,24 @@
+---
+source: crates/rolldown/tests/common/case.rs
+assertion_line: 167
+expression: content
+input_file: crates/rolldown/tests/esbuild/import_star/other_file_export_self_as_namespace_unused_es6
+---
+# warnings
+
+## CIRCULAR_DEPENDENCY
+
+```text
+[CIRCULAR_DEPENDENCY] Warning: Circular dependency: foo.js -> foo.js.
+
+```
+# Assets
+
+## entry_js.mjs
+
+```js
+// foo.js
+const foo = 123;
+
+export { foo };
+```

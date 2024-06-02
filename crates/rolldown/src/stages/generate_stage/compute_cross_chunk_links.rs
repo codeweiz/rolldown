@@ -275,7 +275,10 @@ impl<'a> GenerateStage<'a> {
       let chunk_meta_imports = &index_chunk_depended_symbols[chunk_id];
       for import_ref in chunk_meta_imports.iter().copied() {
         let import_symbol = self.link_output.symbols.get(import_ref);
-
+        dbg!(&import_symbol);
+        // if import_symbol.chunk_id.is_none() {
+        //   continue;
+        // }
         let importee_chunk_id = import_symbol.chunk_id.unwrap_or_else(|| {
           let symbol_owner = &self.link_output.module_table.normal_modules[import_ref.owner];
           let symbol_name = self.link_output.symbols.get_original_name(import_ref);

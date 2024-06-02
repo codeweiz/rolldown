@@ -1,3 +1,1 @@
-import {c} from './c.js'
-
-export { c as a }
+export * as c from './a.js'

@@ -9,7 +9,7 @@ use oxc::{
     },
     Trivias, Visit,
   },
-  semantic::SymbolId,
+  semantic::{ScopeFlags, SymbolId},
   span::{Atom, CompactStr, GetSpan, Span},
 };
 use oxc_index::IndexVec;
@@ -57,6 +57,7 @@ pub struct AstScanner<'me> {
   pub namespace_object_ref: SymbolRef,
   used_exports_ref: bool,
   used_module_ref: bool,
+  pub scope_stack: Vec<ScopeFlags>,
 }
 
 impl<'me> AstScanner<'me> {
@@ -112,6 +113,7 @@ impl<'me> AstScanner<'me> {
       source,
       file_path,
       trivias,
+      scope_stack: vec![],
     }
   }
 
@@ -441,6 +443,7 @@ impl<'me> AstScanner<'me> {
     }
   }
 
+  #[track_caller]
   pub fn add_referenced_symbol(&mut self, id: SymbolId) {
     self.current_stmt_info.referenced_symbols.push((self.idx, id).into());
   }
@@ -449,8 +452,12 @@ impl<'me> AstScanner<'me> {
     self.current_stmt_info.referenced_symbols.push((self.idx, id, chains).into());
   }
 
-  fn is_top_level(&self, symbol_id: SymbolId) -> bool {
+  fn is_top_level_for(&self, symbol_id: SymbolId) -> bool {
     self.scopes.root_scope_id() == self.symbols.scope_id_for(symbol_id)
+  }
+
+  fn is_top_level(&self) -> bool {
+    self.scope_stack.len() == 0
   }
 
   fn try_diagnostic_forbid_const_assign(&mut self, symbol_id: SymbolId) {

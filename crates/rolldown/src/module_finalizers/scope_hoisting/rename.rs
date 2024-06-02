@@ -9,6 +9,7 @@ impl<'me, 'ast> ScopeHoistingFinalizer<'me, 'ast> {
   /// - the reference is for a global variable/the reference doesn't have a `SymbolId`
   /// - the reference doesn't have a `ReferenceId`
   /// - the canonical name is the same as the original name
+  #[track_caller]
   pub fn generate_finalized_expr_for_reference(
     &self,
     id_ref: &IdentifierReference<'ast>,
@@ -41,6 +42,7 @@ impl<'me, 'ast> ScopeHoistingFinalizer<'me, 'ast> {
       });
     }
 
+    dbg!(&std::panic::Location::caller());
     let canonical_name = self.canonical_name_for(canonical_ref);
     if id_ref.name != canonical_name.as_str() {
       return Some(self.snippet.id_ref_expr(canonical_name, id_ref.span));

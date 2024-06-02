@@ -22,12 +22,9 @@ impl<'me> AstScanner<'me> {
     &mut self,
     symbol_id: Option<SymbolId>,
     ident: &IdentifierReference,
-  ) -> bool {
+  ) -> Option<SymbolId> {
     match symbol_id {
-      Some(symbol_id) if self.is_top_level(symbol_id) => {
-        self.add_referenced_symbol(symbol_id);
-        true
-      }
+      Some(symbol_id) if self.is_top_level_for(symbol_id) => Some(symbol_id),
       None => {
         if ident.name == "module" {
           self.used_module_ref = true;
@@ -41,14 +38,22 @@ impl<'me> AstScanner<'me> {
               .with_severity_warning(),
           );
         }
-        false
+        None
       }
-      _ => false,
+      _ => None,
     }
   }
 }
 
 impl<'me, 'ast> Visit<'ast> for AstScanner<'me> {
+  fn enter_scope(&mut self, flags: oxc::semantic::ScopeFlags) {
+    self.scope_stack.push(flags);
+  }
+
+  fn leave_scope(&mut self) {
+    self.scope_stack.pop();
+  }
+
   fn visit_program(&mut self, program: &oxc::ast::ast::Program<'ast>) {
     for (idx, stmt) in program.body.iter().enumerate() {
       self.current_stmt_info.stmt_idx = Some(idx);
@@ -73,7 +78,7 @@ impl<'me, 'ast> Visit<'ast> for AstScanner<'me> {
 
   fn visit_binding_identifier(&mut self, ident: &oxc::ast::ast::BindingIdentifier) {
     let symbol_id = ident.symbol_id.get().unwrap();
-    if self.is_top_level(symbol_id) {
+    if self.is_top_level_for(symbol_id) {
       self.add_declared_id(symbol_id);
     }
     self.try_diagnostic_forbid_const_assign(symbol_id);
@@ -96,8 +101,8 @@ impl<'me, 'ast> Visit<'ast> for AstScanner<'me> {
             }
             Expression::Identifier(ident) => {
               let symbol_id = self.resolve_symbol_from_reference(&ident);
-              let is_top_level = self.resolve_identifier_reference(symbol_id, &ident);
-              break if is_top_level { symbol_id } else { None };
+              let top_level_symbol = self.resolve_identifier_reference(symbol_id, &ident);
+              break top_level_symbol;
             }
             _ => break None,
           }
@@ -107,7 +112,7 @@ impl<'me, 'ast> Visit<'ast> for AstScanner<'me> {
         if let Some(symbol_id) = top_level_symbol {
           Some((symbol_id, chain))
         } else {
-          self.visit_expression(&cur.object);
+          // self.visit_expression(&cur.object);
           None
         }
       }
@@ -123,7 +128,9 @@ impl<'me, 'ast> Visit<'ast> for AstScanner<'me> {
 
   fn visit_identifier_reference(&mut self, ident: &IdentifierReference) {
     let symbol_id = self.resolve_symbol_from_reference(ident);
-    self.resolve_identifier_reference(symbol_id, ident);
+    if let Some(symbol_id) = self.resolve_identifier_reference(symbol_id, ident) {
+      self.add_referenced_symbol(symbol_id);
+    }
   }
 
   fn visit_statement(&mut self, stmt: &oxc::ast::ast::Statement<'ast>) {

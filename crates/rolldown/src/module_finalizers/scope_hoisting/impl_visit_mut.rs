@@ -370,8 +370,8 @@ impl<'me, 'ast> VisitMut<'ast> for ScopeHoistingFinalizer<'me, 'ast> {
         }
       }
     }
-
-    self.try_rewrite_identifier_reference_expr(expr, false);
+    dbg!(&expr);
+    // self.try_rewrite_identifier_reference_expr(expr, false);
 
     walk_mut::walk_expression_mut(self, expr);
   }

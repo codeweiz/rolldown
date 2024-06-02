@@ -1,0 +1,15 @@
+---
+source: crates/rolldown/tests/common/case.rs
+assertion_line: 167
+expression: content
+input_file: crates/rolldown/tests/esbuild/import_star/import_star_export_star_as_unused
+---
+# Assets
+
+## entry_js.mjs
+
+```js
+// entry.js
+let foo = 234;
+console.log(foo);
+```

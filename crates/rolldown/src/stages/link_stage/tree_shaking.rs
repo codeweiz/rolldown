@@ -83,7 +83,6 @@ fn include_symbol(ctx: &mut Context, symbol_ref: SymbolRef, chains: &Vec<Compact
     let Some(export_symbol) = canonical_ref_module.named_exports.get(&name.to_rstr()) else {
       break;
     };
-    dbg!(export_symbol);
     canonical_ref = ctx.symbols.par_canonical_ref_for(export_symbol.referenced);
     canonical_ref_symbol = ctx.symbols.get(canonical_ref);
     canonical_ref_module = &ctx.modules[canonical_ref.owner];
@@ -125,11 +124,11 @@ fn include_statement(ctx: &mut Context, module: &NormalModule, stmt_info_id: Stm
   *is_included = true;
 
   // include statements that are referenced by this statement
-  stmt_info.declared_symbols.iter().for_each(|symbol_ref| {
-    // Notice we also include `declared_symbols`. This for case that import statements declare new symbols, but they are not
-    // really declared by the module itself. We need to include them where they are really declared.
-    include_symbol(ctx, *symbol_ref, &vec![]);
-  });
+  // stmt_info.declared_symbols.iter().for_each(|symbol_ref| {
+  //   // Notice we also include `declared_symbols`. This for case that import statements declare new symbols, but they are not
+  //   // really declared by the module itself. We need to include them where they are really declared.
+  //   include_symbol(ctx, *symbol_ref, &vec![]);
+  // });
 
   stmt_info.referenced_symbols.iter().for_each(|reference_ref| match reference_ref {
     SymbolOrMemberExprRef::Symbol(symbol_ref) => {
